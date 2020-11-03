@@ -1,0 +1,31 @@
+service: backend-test
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  stackName: getBackendData
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject" 
+        - "s3:PutObject"
+      Resource: 
+        - "arn:aws:s3:::[Your Bucket Name]/*"
+functions:
+  app:
+    handler: app/app.handler
+    events: 
+      - http: 
+          path: /
+          method: ANY
+          cors: true
+      - http: 
+          path: /{proxy+}
+          method: ANY
+          cors: true
+resources:
+  Resources:
+    StorageBucket:
+      Type: "AWS::S3::Bucket"
+      Properties:
+        BucketName: [Your Bucket Name]
